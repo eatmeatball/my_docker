@@ -1,0 +1,55 @@
+version: '3.5'
+
+networks:
+  work-docker-net:
+    driver: bridge
+    ipam: 
+      config: 
+        - subnet: ${PROJECT_IP}/16
+services: #表示这是一组服务
+  redis:
+    build:
+      context: ../docker-build/redis
+    # image: redis
+    container_name: redis
+    restart: always #docker服务重启后nginx的docker容器也重启
+    ports:
+      - "6379:6379" #映射的端口，redis容器的6379端口映射到本地的6379端口，可以通过ip:6379访问容器
+    networks:
+      work-docker-net:
+        ipv4_address: ${PROJECT_IP_24}.1
+    volumes:
+      # 挂载数据目录
+      - ${DOCKER_DATA_PATH}redis\data:/data
+  mysql:
+    build:
+      context: ../docker-build/mysql
+    # image: mysql #应用的mysql的镜像名称
+    container_name: mysql #应用的mysql的镜像名称
+    restart: always #docker服务重启后nginx的docker容器也重启
+    ports:
+      - "3306:3306" #映射的端口，redis容器的6379端口映射到本地的6379端口，可以通过ip:6379访问容器
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password # root用户的密码
+      MYSQL_USER: user # 创建新用户
+      MYSQL_PASSWORD: user_password # 新用户的密码
+    volumes:
+      # - ${DOCKER_DATA_PATH}mysql-conf:/etc/mysql #本地mysql映射到docker
+      - ${DOCKER_DATA_PATH}mysql\data:/var/lib/mysql #本地mysql映射到docker
+    networks:
+      work-docker-net:
+        ipv4_address: ${PROJECT_IP_24}.2
+  mongo:
+    build:
+      context: ../docker-build/mongodb
+    # image: mongo
+    container_name: mongo
+    restart: always #docker服务重启后nginx的docker容器也重启
+    ports:
+      - "27017:27017" #映射的端口，redis容器的6379端口映射到本地的6379端口，可以通过ip:6379访问容器
+    volumes:
+      # 挂载数据目录
+      - ${DOCKER_DATA_PATH}mongodb\db:/data/db
+    networks:
+      work-docker-net:
+        ipv4_address: ${PROJECT_IP_24}.3
