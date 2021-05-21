@@ -1,4 +1,4 @@
-FROM redis:latest
+FROM redis:6.2.3
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 

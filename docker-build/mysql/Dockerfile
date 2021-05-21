@@ -1,5 +1,6 @@
 ARG MYSQL_VERSION
-FROM mysql:latest
+FROM mysql/mysql-server:8.0.25
+
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
