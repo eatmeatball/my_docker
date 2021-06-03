@@ -20,3 +20,9 @@ RUN apt-get update \
 RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer 
 
 RUN composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+
+
+# RUN ln -sf /bin/bash /bin/sh
+
+RUN apt-get upgrade
+# RUN apt-get -y install vim 

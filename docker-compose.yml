@@ -20,7 +20,29 @@ services: #表示这是一组服务
       - ${WORKSPACE}:/var/www:cached
     networks:
       work-docker-net:
-        ipv4_address: ${PROJECT_IP_24}.1
+        ipv4_address: ${PROJECT_IP_24}.1        
+    extra_hosts:
+      - "transaction-ifang.58v5.cn:172.29.25.120"
+      - "open-ifang.58v5.cn:172.29.25.120"
+      - "financeapi-ifang.58v5.cn:172.29.25.120"
+      - "api-ifang.58v5.cn:172.29.25.120"
+      - "dmapi-ifang.58v5.cn:172.29.25.120"
+      - "imapi-ifang.58v5.cn:172.29.25.120"
+      - "cmapi-ifang.58v5.cn:172.29.25.120"
+      - "ifang.58v5.cn:172.29.25.120"
+      - "ifangapi.58v5.cn:172.29.25.120"
+      - "ifangdkt.58v5.cn:172.29.25.120"
+      - "ifangapi-rewardapi.58v5.cn:172.29.25.120"
+      - "daiketong.58v5.cn:172.29.25.120"
+      - "oldapi-ifang.58v5.cn:172.29.25.120"
+      - "static.58.com:192.168.67.173"
+      - "j1.58cdn.com.cn:192.168.67.173"
+      - "j2.58cdn.com.cn:192.168.67.173"
+      - "c.58cdn.com.cn:192.168.67.173"
+      - "img.58cdn.com.cn:192.168.67.173"
+      - "te.union.vip.58.com:192.168.178.19"
+      - "sso.test.58.com:192.168.177.150"
+      - "t.union.web.58dns.org:192.168.178.19"
     links:
       - mysql
       - mongo
