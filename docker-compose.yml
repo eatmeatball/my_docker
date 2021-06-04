@@ -7,48 +7,6 @@ networks:
       config: 
         - subnet: ${PROJECT_IP}/16
 services: #表示这是一组服务 
-### PHP-FPM #########################################
-  php-fpm:
-    build:
-      context: docker-build/php-fpm
-    container_name: php-fpm #应用的mysql的镜像名称
-    expose:
-      - "9000"
-    restart: always #docker服务重启后nginx的docker容器也重启
-    volumes:
-      - ./docker-build/php-fpm/php-ini-overrides.ini:/etc/php/7.4/fpm/conf.d/99-overrides.ini
-      - ${WORKSPACE}:/var/www:cached
-    networks:
-      work-docker-net:
-        ipv4_address: ${PROJECT_IP_24}.1        
-    extra_hosts:
-      - "transaction-ifang.58v5.cn:172.29.25.120"
-      - "open-ifang.58v5.cn:172.29.25.120"
-      - "financeapi-ifang.58v5.cn:172.29.25.120"
-      - "api-ifang.58v5.cn:172.29.25.120"
-      - "dmapi-ifang.58v5.cn:172.29.25.120"
-      - "imapi-ifang.58v5.cn:172.29.25.120"
-      - "cmapi-ifang.58v5.cn:172.29.25.120"
-      - "ifang.58v5.cn:172.29.25.120"
-      - "ifangapi.58v5.cn:172.29.25.120"
-      - "ifangdkt.58v5.cn:172.29.25.120"
-      - "ifangapi-rewardapi.58v5.cn:172.29.25.120"
-      - "daiketong.58v5.cn:172.29.25.120"
-      - "oldapi-ifang.58v5.cn:172.29.25.120"
-      - "static.58.com:192.168.67.173"
-      - "j1.58cdn.com.cn:192.168.67.173"
-      - "j2.58cdn.com.cn:192.168.67.173"
-      - "c.58cdn.com.cn:192.168.67.173"
-      - "img.58cdn.com.cn:192.168.67.173"
-      - "te.union.vip.58.com:192.168.178.19"
-      - "sso.test.58.com:192.168.177.150"
-      - "t.union.web.58dns.org:192.168.178.19"
-    links:
-      - mysql
-      - mongo
-      - redis
-    # networks:
-    #   - backend
 ### NGINX Server #########################################
   nginx:
     build:
@@ -71,7 +29,7 @@ services: #表示这是一组服务
       - "${NGINX_HOST_HTTPS_PORT}:443"
     restart: always #docker服务重启后nginx的docker容器也重启
     links:
-      - php-fpm # 连接php的docker容器 会在host文件生成 php 192.169.1.101(php 容器的局域网ip)
+      - php-super # 连接php的docker容器 会在host文件生成 php 192.169.1.101(php 容器的局域网ip)
     # depends_on:
     #   - php-fpm
     networks:
@@ -123,3 +81,59 @@ services: #表示这是一组服务
     networks:
       work-docker-net:
         ipv4_address: ${PROJECT_IP_24}.5
+  php-super:
+    working_dir: /var/www
+    build:
+        context: ./docker-build/php-super
+        dockerfile: Dockerfile
+        # args:
+            # WWWGROUP: '${WWWGROUP:-20}'
+    container_name: php-super #应用的mysql的镜像名称
+    restart: always #docker服务重启后nginx的docker容器也重启
+    image: php-super
+    expose:
+      - "9000"
+    environment:
+        LARAVEL_SAIL: 1
+    volumes:
+        - ${WORKSPACE}:/var/www:cached
+    networks:
+      work-docker-net:
+        ipv4_address: ${PROJECT_IP_24}.6
+    extra_hosts:
+      - "transaction-ifang.58v5.cn:172.29.25.120"
+      - "open-ifang.58v5.cn:172.29.25.120"
+      - "financeapi-ifang.58v5.cn:172.29.25.120"
+      - "api-ifang.58v5.cn:172.29.25.120"
+      - "dmapi-ifang.58v5.cn:172.29.25.120"
+      - "imapi-ifang.58v5.cn:172.29.25.120"
+      - "cmapi-ifang.58v5.cn:172.29.25.120"
+      - "ifang.58v5.cn:172.29.25.120"
+      - "ifangapi.58v5.cn:172.29.25.120"
+      - "ifangdkt.58v5.cn:172.29.25.120"
+      - "ifangapi-rewardapi.58v5.cn:172.29.25.120"
+      - "daiketong.58v5.cn:172.29.25.120"
+      - "oldapi-ifang.58v5.cn:172.29.25.120"
+      - "static.58.com:192.168.67.173"
+      - "j1.58cdn.com.cn:192.168.67.173"
+      - "j2.58cdn.com.cn:192.168.67.173"
+      - "c.58cdn.com.cn:192.168.67.173"
+      - "img.58cdn.com.cn:192.168.67.173"
+      - "te.union.vip.58.com:192.168.178.19"
+      - "sso.test.58.com:192.168.177.150"
+      - "t.union.web.58dns.org:192.168.178.19"
+      - "controler1.srvmgr.service.58dns.org:192.168.67.230"
+      - "controler2.srvmgr.service.58dns.org:192.168.67.230"
+      - "controler3.srvmgr.service.58dns.org:192.168.67.230"
+      - "controler4.srvmgr.service.58dns.org:192.168.67.230"
+      - "flux.collector.srvmgr.58dns.org:192.168.67.230"
+      - "fluxcontrol.collector.srvmgr.58dns.org:192.168.67.230"
+      - "srvmgrregist1.service.58dns.org:192.168.67.230"
+      - "srvmgrregist2.service.58dns.org:192.168.67.230"
+      - "srvmgrregist3.service.58dns.org:192.168.67.230"
+      - "srvmgrregist4.service.58dns.org:192.168.67.230"
+      - "wconfig.58dns.org:10.9.196.118"
+    links:
+      - mysql
+      - mongo
+      - redis
