@@ -1,8 +1,11 @@
 version: '3.5'
 
 networks:
-  my_docker_net:
+  work-docker-net:
     driver: bridge
+    ipam: 
+      config: 
+        - subnet: ${PROJECT_IP}/16
 services: #表示这是一组服务 
 ### NGINX Server #########################################
   nginx:
@@ -30,7 +33,8 @@ services: #表示这是一组服务
     # depends_on:
     #   - php-fpm
     networks:
-      - my_docker_net
+      work-docker-net:
+        ipv4_address: ${PROJECT_IP_24}.2
   redis:
     build:
       context: docker-build/redis
@@ -40,7 +44,8 @@ services: #表示这是一组服务
     ports:
       - "6379:6379" #映射的端口，redis容器的6379端口映射到本地的6379端口，可以通过ip:6379访问容器
     networks:
-      - my_docker_net
+      work-docker-net:
+        ipv4_address: ${PROJECT_IP_24}.3
     volumes:
       # 挂载数据目录
       - ${DOCKER_DATA_PATH}${REDIS_DATA_PATH}:/data
@@ -60,7 +65,8 @@ services: #表示这是一组服务
       # - ${DOCKER_DATA_PATH}mysql-conf:/etc/mysql #本地mysql映射到docker
       - ${DOCKER_DATA_PATH}${MYSQL_DATA_PATH}:/var/lib/mysql #本地mysql映射到docker
     networks:
-      - my_docker_net
+      work-docker-net:
+        ipv4_address: ${PROJECT_IP_24}.4
   mongo:
     build:
       context: docker-build/mongodb
@@ -73,7 +79,8 @@ services: #表示这是一组服务
       # 挂载数据目录
       - ${DOCKER_DATA_PATH}${MONGODB_DATA_PATH}:/data/db
     networks:
-      - my_docker_net
+      work-docker-net:
+        ipv4_address: ${PROJECT_IP_24}.5
   php-super:
     working_dir: /var/www
     build:
@@ -91,40 +98,41 @@ services: #表示这是一组服务
     volumes:
         - ${WORKSPACE}:/var/www:cached
     networks:
-      - my_docker_net
+      work-docker-net:
+        ipv4_address: ${PROJECT_IP_24}.6
     extra_hosts:
-      transaction-ifang.58v5.cn : 172.29.25.120
-      open-ifang.58v5.cn : 172.29.25.120
-      financeapi-ifang.58v5.cn : 172.29.25.120
-      api-ifang.58v5.cn : 172.29.25.120
-      dmapi-ifang.58v5.cn : 172.29.25.120
-      imapi-ifang.58v5.cn : 172.29.25.120
-      cmapi-ifang.58v5.cn : 172.29.25.120
-      ifang.58v5.cn : 172.29.25.120
-      ifangapi.58v5.cn : 172.29.25.120
-      ifangdkt.58v5.cn : 172.29.25.120
-      ifangapi-rewardapi.58v5.cn : 172.29.25.120
-      daiketong.58v5.cn : 172.29.25.120
-      oldapi-ifang.58v5.cn : 172.29.25.120
-      static.58.com : 192.168.67.173
-      j1.58cdn.com.cn : 192.168.67.173
-      j2.58cdn.com.cn : 192.168.67.173
-      c.58cdn.com.cn : 192.168.67.173
-      img.58cdn.com.cn : 192.168.67.173
-      te.union.vip.58.com : 192.168.178.19
-      sso.test.58.com : 192.168.177.150
-      t.union.web.58dns.org : 192.168.178.19
-      controler1.srvmgr.service.58dns.org : 192.168.67.230
-      controler2.srvmgr.service.58dns.org : 192.168.67.230
-      controler3.srvmgr.service.58dns.org : 192.168.67.230
-      controler4.srvmgr.service.58dns.org : 192.168.67.230
-      flux.collector.srvmgr.58dns.org : 192.168.67.230
-      fluxcontrol.collector.srvmgr.58dns.org : 192.168.67.230
-      srvmgrregist1.service.58dns.org : 192.168.67.230
-      srvmgrregist2.service.58dns.org : 192.168.67.230
-      srvmgrregist3.service.58dns.org : 192.168.67.230
-      srvmgrregist4.service.58dns.org : 192.168.67.230
-      wconfig.58dns.org : 10.9.196.118
+      - "transaction-ifang.58v5.cn:172.29.25.120"
+      - "open-ifang.58v5.cn:172.29.25.120"
+      - "financeapi-ifang.58v5.cn:172.29.25.120"
+      - "api-ifang.58v5.cn:172.29.25.120"
+      - "dmapi-ifang.58v5.cn:172.29.25.120"
+      - "imapi-ifang.58v5.cn:172.29.25.120"
+      - "cmapi-ifang.58v5.cn:172.29.25.120"
+      - "ifang.58v5.cn:172.29.25.120"
+      - "ifangapi.58v5.cn:172.29.25.120"
+      - "ifangdkt.58v5.cn:172.29.25.120"
+      - "ifangapi-rewardapi.58v5.cn:172.29.25.120"
+      - "daiketong.58v5.cn:172.29.25.120"
+      - "oldapi-ifang.58v5.cn:172.29.25.120"
+      - "static.58.com:192.168.67.173"
+      - "j1.58cdn.com.cn:192.168.67.173"
+      - "j2.58cdn.com.cn:192.168.67.173"
+      - "c.58cdn.com.cn:192.168.67.173"
+      - "img.58cdn.com.cn:192.168.67.173"
+      - "te.union.vip.58.com:192.168.178.19"
+      - "sso.test.58.com:192.168.177.150"
+      - "t.union.web.58dns.org:192.168.178.19"
+      - "controler1.srvmgr.service.58dns.org:192.168.67.230"
+      - "controler2.srvmgr.service.58dns.org:192.168.67.230"
+      - "controler3.srvmgr.service.58dns.org:192.168.67.230"
+      - "controler4.srvmgr.service.58dns.org:192.168.67.230"
+      - "flux.collector.srvmgr.58dns.org:192.168.67.230"
+      - "fluxcontrol.collector.srvmgr.58dns.org:192.168.67.230"
+      - "srvmgrregist1.service.58dns.org:192.168.67.230"
+      - "srvmgrregist2.service.58dns.org:192.168.67.230"
+      - "srvmgrregist3.service.58dns.org:192.168.67.230"
+      - "srvmgrregist4.service.58dns.org:192.168.67.230"
+      - "wconfig.58dns.org:10.9.196.118"
     links:
       - mysql
       - mongo
