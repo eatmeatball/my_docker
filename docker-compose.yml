@@ -5,20 +5,22 @@ networks:
     driver: bridge
 services: #表示这是一组服务 
 ### NGINX Server #########################################
-  qnginx:
+  nginx:
     build: 
-      context: 'docker-build/qnginx'
-    container_name: qnginx
+      context: 'docker-build/nginx'
+    container_name: nginx
     volumes: 
       - ${WORKSPACE}:/var/www:cached
       - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
-      - './docker-build/qnginx/sites/:/etc/nginx/sites-available'
+      - './docker-build/nginx/sites/:/etc/nginx/sites-available'
       # - './docker-build/qnginx/nginx:/etc/nginx'
     ports: 
       - "3070-3099:70-99"
     restart: always #docker服务重启后nginx的docker容器也重启
     links:
-      - php-super # 连接php的docker容器 会在host文件生成 php 192.169.1.101(php 容器的局域网ip)
+      - php-71 # 连接php的docker容器 会在host文件生成 php 192.169.1.101(php 容器的局域网ip)
+      - php-80 # 连接php的docker容器 会在host文件生成 php 192.169.1.101(php 容器的局域网ip)
+      - php-81 # 连接php的docker容器 会在host文件生成 php 192.169.1.101(php 容器的局域网ip)
     networks:
       - my_docker_net
   redis:
@@ -64,16 +66,16 @@ services: #表示这是一组服务
       - ${DOCKER_DATA_PATH}${MONGODB_DATA_PATH}:/data/db
     networks:
       - my_docker_net
-  php-super:
+  php-71:
     working_dir: /var/www
     build:
-        context: ./docker-build/php-super
+        context: ./docker-build/php-7.1
         dockerfile: Dockerfile
         # args:
             # WWWGROUP: '${WWWGROUP:-20}'
-    container_name: php-super #应用的mysql的镜像名称
+    container_name: php-71 #应用的mysql的镜像名称
     restart: always #docker服务重启后nginx的docker容器也重启
-    image: php-super
+    image: php-71
     expose:
       - "9000"
     environment:
